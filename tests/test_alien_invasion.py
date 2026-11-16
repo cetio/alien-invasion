@@ -1,4 +1,9 @@
-"""Tests for the Play menu, input guards, and new-run reset."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Tests for the Play menu, input guards, and new-run reset.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 import unittest
 from unittest.mock import patch
 
@@ -18,9 +23,6 @@ class PlayMenuTests(unittest.TestCase):
         })
         drivers.start()
         self.addCleanup(drivers.stop)
-        pause = patch("alien_invasion.sleep")
-        pause.start()
-        self.addCleanup(pause.stop)
         self.addCleanup(pygame.quit)
         self.game = AlienInvasion()
         pygame.event.clear()
@@ -36,20 +38,24 @@ class PlayMenuTests(unittest.TestCase):
                          pos=self.game.play_button.rect.center, button=1)
 
     def test_game_opens_on_an_inactive_menu(self) -> None:
+        """Game opens on an inactive menu."""
         self.assertTrue(self.game.running)
         self.assertFalse(self.game.active)
         self.assertNotIn(self.game.play_button, self.game.entities)
 
     def test_inactive_screen_draws_button_and_shows_cursor(self) -> None:
+        """Inactive screen draws button and shows cursor."""
         pygame.mouse.set_visible(False)
         self.game._update_screen()
         self.assertTrue(pygame.mouse.get_visible())
         self.assertEqual(self.game.screen.get_at(
             self.game.play_button.rect.topleft)[:3],
-            self.game.settings.button_color)
+            self.game.settings.button_border_color)
 
     def test_inactive_loop_keeps_input_and_drawing_but_not_simulation(self) -> None:
+        """Inactive loop keeps input and drawing but not simulation."""
         def stop_after_frame():
+            """Stop after frame."""
             self.game.running = False
 
         with patch.object(self.game, "_check_input") as check_input, \
@@ -64,10 +70,12 @@ class PlayMenuTests(unittest.TestCase):
         collisions.assert_not_called()
 
     def test_outside_click_does_not_start_game(self) -> None:
+        """Outside click does not start game."""
         self._send_event(pygame.MOUSEBUTTONDOWN, pos=(0, 0), button=1)
         self.assertFalse(self.game.active)
 
     def test_non_left_clicks_do_not_start_game(self) -> None:
+        """Non left clicks do not start game."""
         for button in (2, 3, 4, 5):
             with self.subTest(button=button):
                 self._send_event(
@@ -76,12 +84,14 @@ class PlayMenuTests(unittest.TestCase):
                 self.assertFalse(self.game.active)
 
     def test_play_uses_click_coordinates_and_hides_cursor(self) -> None:
+        """Play uses click coordinates and hides cursor."""
         with patch("pygame.mouse.get_pos", return_value=(0, 0)):
             self._click_play()
         self.assertTrue(self.game.active)
         self.assertFalse(pygame.mouse.get_visible())
 
     def test_active_screen_does_not_draw_button(self) -> None:
+        """Active screen does not draw button."""
         self._click_play()
         with patch.object(self.game.play_button, "draw") as draw:
             self.game._update_screen()
@@ -89,6 +99,7 @@ class PlayMenuTests(unittest.TestCase):
         self.assertFalse(pygame.mouse.get_visible())
 
     def test_invisible_button_cannot_restart_active_game(self) -> None:
+        """Invisible button cannot restart active game."""
         self._click_play()
         self.game.game_stats.ships_left = 1
         self.game.ship.x = 100.0
@@ -102,6 +113,7 @@ class PlayMenuTests(unittest.TestCase):
         self.assertEqual(tuple(self.game.arsenal.arsenal), bullets)
 
     def test_inactive_movement_keydowns_do_not_set_flags(self) -> None:
+        """Inactive movement keydowns do not set flags."""
         for key, flag in ((pygame.K_LEFT, "moving_left"),
                           (pygame.K_RIGHT, "moving_right")):
             with self.subTest(key=key):
@@ -109,12 +121,14 @@ class PlayMenuTests(unittest.TestCase):
                 self.assertFalse(getattr(self.game.ship, flag))
 
     def test_inactive_space_does_not_fire_or_play_sound(self) -> None:
+        """Inactive space does not fire or play sound."""
         with patch.object(self.game, "laser_sound") as sound:
             self._send_event(pygame.KEYDOWN, key=pygame.K_SPACE)
         self.assertFalse(self.game.arsenal.arsenal)
         sound.play.assert_not_called()
 
     def test_inactive_keyups_clear_movement_flags(self) -> None:
+        """Inactive keyups clear movement flags."""
         self.game.ship.moving_left = True
         self.game.ship.moving_right = True
         self._send_event(pygame.KEYUP, key=pygame.K_LEFT)
@@ -123,6 +137,7 @@ class PlayMenuTests(unittest.TestCase):
         self.assertFalse(self.game.ship.moving_right)
 
     def test_active_movement_keys_still_work(self) -> None:
+        """Active movement keys still work."""
         self._click_play()
         for key, flag in ((pygame.K_LEFT, "moving_left"),
                           (pygame.K_RIGHT, "moving_right")):
@@ -136,6 +151,7 @@ class PlayMenuTests(unittest.TestCase):
                 self.assertFalse(getattr(self.game.ship, flag))
 
     def test_active_space_still_fires_and_plays_sound(self) -> None:
+        """Active space still fires and plays sound."""
         self._click_play()
         with patch.object(self.game, "laser_sound") as sound:
             self._send_event(pygame.KEYDOWN, key=pygame.K_SPACE)
@@ -143,6 +159,7 @@ class PlayMenuTests(unittest.TestCase):
         sound.play.assert_called_once_with(fade_ms=250)
 
     def test_quit_key_and_window_close_work_while_inactive(self) -> None:
+        """Quit key and window close work while inactive."""
         for event_type, attributes in (
                 (pygame.KEYDOWN, {"key": pygame.K_q}), (pygame.QUIT, {})):
             with self.subTest(event_type=event_type):
@@ -154,6 +171,7 @@ class PlayMenuTests(unittest.TestCase):
                 quit_game.assert_called_once_with()
 
     def test_game_over_and_play_restore_a_fresh_run(self) -> None:
+        """Game over and play restore a fresh run."""
         self._click_play()
         self.game.ship.fire()
         old_fleet = tuple(self.game.alien_fleet.fleet)
@@ -179,12 +197,15 @@ class PlayMenuTests(unittest.TestCase):
         self.assertEqual(len(self.game.alien_fleet.fleet), len(old_fleet))
         self.assertTrue(set(old_fleet).isdisjoint(self.game.alien_fleet.fleet))
         self.assertEqual(self.game.ship.rect.midbottom,
-                         self.game.screen.get_rect().midbottom)
+                         (self.game.screen.get_rect().centerx,
+                          self.game.screen.get_rect().bottom
+                          - self.game.settings.ship_bottom_margin))
         self.assertEqual(self.game.ship.x, float(self.game.ship.rect.x))
         self.assertFalse(self.game.ship.moving_left)
         self.assertFalse(self.game.ship.moving_right)
 
     def test_losing_a_ship_does_not_restore_lives_or_show_menu(self) -> None:
+        """Losing a ship does not restore lives or show menu."""
         self._click_play()
         self.game._check_game_status()
         self.assertEqual(self.game.game_stats.ships_left,
@@ -193,6 +214,7 @@ class PlayMenuTests(unittest.TestCase):
         self.assertFalse(pygame.mouse.get_visible())
 
     def test_clearing_fleet_does_not_restore_lives_or_show_menu(self) -> None:
+        """Clearing fleet does not restore lives or show menu."""
         self._click_play()
         self.game.game_stats.ships_left = 1
         alien = next(iter(self.game.alien_fleet.fleet))

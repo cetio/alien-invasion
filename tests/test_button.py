@@ -1,4 +1,9 @@
-"""Tests for button layout, rendering, and hit testing."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Tests for button layout, rendering, and hit testing.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from types import SimpleNamespace
 import unittest
 
@@ -21,14 +26,17 @@ class ButtonTests(unittest.TestCase):
             screen=self.screen, settings=self.settings), "Play")
 
     def test_button_and_label_are_centered(self) -> None:
+        """Button and label are centered."""
         self.assertEqual(self.button.rect.size, (200, 50))
         self.assertEqual(self.button.rect.center, self.screen.get_rect().center)
         self.assertEqual(self.button.message_rect.center, self.button.rect.center)
 
     def test_label_uses_a_transparent_background(self) -> None:
+        """Label uses a transparent background."""
         self.assertEqual(self.button.message_image.get_at((0, 0)).a, 0)
 
     def test_hit_test_includes_only_points_inside_rectangle(self) -> None:
+        """Hit test includes only points inside rectangle."""
         rect = self.button.rect
         self.assertTrue(self.button.check_clicked(rect.center))
         self.assertTrue(self.button.check_clicked(rect.topleft))
@@ -36,12 +44,13 @@ class ButtonTests(unittest.TestCase):
         self.assertFalse(self.button.check_clicked((0, 0)))
 
     def test_drawing_preserves_the_surrounding_background(self) -> None:
+        """Drawing preserves the surrounding background."""
         background_color = (12, 23, 34)
         self.screen.fill(background_color)
         self.button.draw()
         self.assertEqual(self.screen.get_at((0, 0))[:3], background_color)
         self.assertEqual(self.screen.get_at(self.button.rect.topleft)[:3],
-                         self.settings.button_color)
+                         self.settings.button_border_color)
 
 
 if __name__ == '__main__':

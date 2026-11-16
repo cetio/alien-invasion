@@ -1,4 +1,9 @@
-"""Tests for resettable settings and difficulty scaling."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Tests for resettable settings and difficulty scaling.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 import unittest
 
 from settings import Settings
@@ -17,13 +22,14 @@ class SettingsTests(unittest.TestCase):
             "bullet_h": 80,
             "bullet_speed": 7,
             "bullet_amount": 5,
-            "alien_w": 40,
-            "alien_h": 40,
-            "fleet_speed": 2,
+            "alien_w": 48,
+            "alien_h": 48,
+            "fleet_speed": 1.5,
             "fleet_drop_speed": 10,
         }
 
     def test_constructor_initializes_dynamic_defaults(self) -> None:
+        """Constructor initializes dynamic defaults."""
         for name, value in self.defaults.items():
             with self.subTest(setting=name):
                 self.assertEqual(getattr(self.settings, name), value)
@@ -31,6 +37,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(self.settings.fleet_direction, 1)
 
     def test_initialization_restores_all_dynamic_defaults(self) -> None:
+        """Initialization restores all dynamic defaults."""
         for name in self.defaults:
             setattr(self.settings, name, -1)
         self.settings.initialize_dynamic_settings()
@@ -39,6 +46,7 @@ class SettingsTests(unittest.TestCase):
                 self.assertEqual(getattr(self.settings, name), value)
 
     def test_initialization_preserves_static_configuration(self) -> None:
+        """Initialization preserves static configuration."""
         self.settings.screen_w = 1000
         self.settings.difficulty_scale = 1.25
         before = vars(self.settings).copy()
@@ -46,6 +54,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(vars(self.settings), before)
 
     def test_difficulty_scales_only_movement_speeds(self) -> None:
+        """Difficulty scales only movement speeds."""
         expected = vars(self.settings).copy()
         for name in ("ship_speed", "bullet_speed", "fleet_speed"):
             expected[name] *= self.settings.difficulty_scale
@@ -53,6 +62,7 @@ class SettingsTests(unittest.TestCase):
         self.assertEqual(vars(self.settings), expected)
 
     def test_repeated_increases_compound(self) -> None:
+        """Repeated increases compound."""
         for increases in range(1, 4):
             self.settings.increase_difficulty()
             for name in ("ship_speed", "bullet_speed", "fleet_speed"):
