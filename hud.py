@@ -59,10 +59,10 @@ class HUD:
             self.boundaries.centerx, self.padding)
 
     def _setup_life_image(self) -> None:
-        """Load one reusable ship image for the remaining-life icons."""
-        self.life_image = pygame.image.load(self.settings.ship_file)
+        """Load and scale one red heart for the remaining-life icons."""
+        self.life_image = pygame.image.load(self.settings.life_file)
         self.life_image = pygame.transform.scale(
-            self.life_image, (self.settings.ship_w, self.settings.ship_h))
+            self.life_image, (32, 32))
         self.life_rect = self.life_image.get_rect()
         self.life_rect.topleft = (self.padding, self.padding)
 

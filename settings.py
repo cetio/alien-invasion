@@ -36,6 +36,7 @@ class Settings:
 
         self.alien_file = self.images_dir / "enemy_4.png"
         self.alien_bullet_file = self.images_dir / "laserBlast.png"
+        self.life_file = self.images_dir / "Player_Heart.png"
         self.impact_sound = self.sound_dir / "impactSound.mp3"
         self.fleet_direction = 1
         self.difficulty_scale = 1.1
