@@ -1,4 +1,9 @@
-"""The player's laser bolts."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: The player's laser bolts.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from typing import TYPE_CHECKING
 
 import pygame

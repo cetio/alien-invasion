@@ -1,4 +1,9 @@
-"""The alien fleet."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: The alien fleet.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from typing import TYPE_CHECKING
 
 import pygame
@@ -24,10 +29,12 @@ class AlienFleet(Entity):
         self.arsenal = AlienArsenal(self)
         self.fleet_direction = self.settings.fleet_direction
         self.drop_speed = self.settings.fleet_drop_speed
+        self.explosions = []
 
     def create_fleet(self) -> None:
-        """Create a centered rectangular fleet in the screen's top half."""
+        """Create a shallow chevron with the original fleet size and bounds."""
         self.arsenal.reset()
+        self.explosions.clear()
         alien_w = self.settings.alien_w
         alien_h = self.settings.alien_h
         screen_w = self.settings.screen_w
@@ -36,7 +43,7 @@ class AlienFleet(Entity):
             screen_w, screen_h, alien_w, alien_h)
         x_offset, y_offset = self._calculate_offsets(
             screen_w, screen_h, alien_w, alien_h, fleet_w, fleet_h)
-        self._create_rectangle_fleet(
+        self._create_chevron_fleet(
             alien_w, alien_h, fleet_w, fleet_h, x_offset, y_offset)
 
     def _calculate_fleet_size(
@@ -63,16 +70,21 @@ class AlienFleet(Entity):
         y_offset = max(0, int((half_screen - fleet_h * alien_h) // 2) - alien_h)
         return x_offset, y_offset
 
-    def _create_rectangle_fleet(
+    def _create_chevron_fleet(
             self, alien_w, alien_h, fleet_w, fleet_h,
             x_offset, y_offset) -> None:
-        """Create spaced rows and columns of aliens."""
-        for row in range(fleet_h):
-            for column in range(fleet_w):
-                if column % 2 == 0 or row % 2 == 0:
-                    continue
-                current_x = alien_w * column + x_offset
-                current_y = alien_h * row + y_offset
+        """Stagger the original rows into chevrons within their original bounds."""
+        columns = fleet_w // 2
+        rows = fleet_h // 2
+        vertical_span = max(0, (rows - 1) * alien_h * 2)
+        depth = min(alien_h // 2, vertical_span)
+        row_spacing = (vertical_span - depth) // max(1, rows - 1)
+        for row in range(rows):
+            for column in range(columns):
+                distance = abs(2 * column - (columns - 1))
+                stagger = depth * (columns - 1 - distance) // max(1, columns - 1)
+                current_x = alien_w * (2 * column + 1) + x_offset
+                current_y = alien_h + row * row_spacing + stagger + y_offset
                 self._create_alien(current_x, current_y)
 
     def _create_alien(self, current_x, current_y) -> None:
@@ -81,6 +93,9 @@ class AlienFleet(Entity):
 
     def update(self) -> None:
         """Move the fleet and update its arsenal."""
+        now = pygame.time.get_ticks()
+        self.explosions = [effect for effect in self.explosions
+                           if effect[1] > now]
         self._check_fleet_edges()
         self.fleet.update()
         self.arsenal.update_arsenal()
@@ -106,7 +121,12 @@ class AlienFleet(Entity):
 
     def check_collisions(self, other_group) -> dict:
         """Remove colliding aliens and projectiles, returning the hits."""
-        return pygame.sprite.groupcollide(self.fleet, other_group, True, True)
+        collisions = pygame.sprite.groupcollide(
+            self.fleet, other_group, True, True)
+        expires = pygame.time.get_ticks() + 240
+        for alien in collisions:
+            self.explosions.append((alien.rect.center, expires))
+        return collisions
 
     def check_fleet_bottom(self) -> bool:
         """Return whether any alien has reached the bottom of the screen."""
@@ -121,7 +141,14 @@ class AlienFleet(Entity):
         return not self.fleet
 
     def draw(self) -> None:
-        """Draw the fleet's arsenal and each alien."""
+        """Draw pixel explosions below the arsenal and surviving aliens."""
+        now = pygame.time.get_ticks()
+        for (x, y), expires in self.explosions:
+            distance = 4 + (240 - (expires - now)) // 12
+            for dx, dy in ((-1, -1), (1, -1), (-1, 1), (1, 1),
+                           (0, -1), (0, 1), (-1, 0), (1, 0)):
+                pygame.draw.rect(self.game.screen, (255, 190, 90),
+                                 (x + dx * distance, y + dy * distance, 4, 4))
         self.arsenal.draw()
         alien: Alien
         for alien in self.fleet:

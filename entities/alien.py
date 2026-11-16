@@ -1,4 +1,9 @@
-"""The alien enemies."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: The alien enemies.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from typing import TYPE_CHECKING
 
 import pygame
@@ -28,6 +33,8 @@ class Alien(Sprite, Entity):
         self.image = pygame.image.load(self.settings.alien_file)
         self.image = pygame.transform.scale(
             self.image, (self.settings.alien_w, self.settings.alien_h))
+        self.right_image = self.image
+        self.left_image = pygame.transform.flip(self.image, True, False)
 
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -41,6 +48,8 @@ class Alien(Sprite, Entity):
         self.x += self.settings.fleet_speed * self.fleet.fleet_direction
         self.rect.x = self.x
         self.rect.y = self.y
+        self.image = (self.right_image if self.fleet.fleet_direction > 0
+                      else self.left_image)
 
     def check_edges(self) -> bool:
         """Return whether the alien has reached either screen edge."""

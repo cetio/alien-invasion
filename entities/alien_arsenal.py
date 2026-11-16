@@ -1,4 +1,9 @@
-"""The alien fleet's weapon loadout."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: The alien fleet's weapon loadout.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from random import choice
 from typing import TYPE_CHECKING
 
