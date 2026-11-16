@@ -54,6 +54,7 @@ class GameStats:
         scores = {"high_score": self.high_score}
         contents = json.dumps(scores, indent=4)
         try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
             self.path.write_text(contents, encoding="utf-8")
         except OSError as error:
             print(f"Unable to save high score to {self.path}: {error}",
@@ -68,6 +69,7 @@ class GameStats:
                 return
             scores = json.loads(contents)
         except FileNotFoundError:
+            self.save_scores()
             return
         except (OSError, json.JSONDecodeError, UnicodeDecodeError) as error:
             print(f"Unable to load high score from {self.path}: {error}",
