@@ -57,10 +57,10 @@ class AlienFleet(Entity):
     def _calculate_offsets(
             self, screen_w, screen_h, alien_w, alien_h,
             fleet_w, fleet_h) -> tuple[int, int]:
-        """Return offsets that center the fleet in the screen's top half."""
+        """Center the fleet horizontally and leave a small top margin."""
         x_offset = int((screen_w - fleet_w * alien_w) // 2)
         half_screen = screen_h // 2
-        y_offset = int((half_screen - fleet_h * alien_h) // 2)
+        y_offset = max(0, int((half_screen - fleet_h * alien_h) // 2) - alien_h)
         return x_offset, y_offset
 
     def _create_rectangle_fleet(
