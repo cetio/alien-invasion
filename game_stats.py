@@ -1,4 +1,9 @@
-"""Statistics for the current game."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Statistics for the current game.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 import json
 import sys
 from typing import TYPE_CHECKING
@@ -17,7 +22,9 @@ class GameStats:
         self.path = self.settings.scores_file
         self.max_score = 0
         self.reset_stats()
-        self._init_saved_scores()
+        self.high_score = 0
+        if getattr(game, "milestone", "final") == "final":
+            self._init_saved_scores()
 
     def reset_stats(self) -> None:
         """Restore run statistics without clearing score records."""

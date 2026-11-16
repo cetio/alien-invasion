@@ -1,4 +1,9 @@
-"""Buttons for the game's menus."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Buttons for the game's menus.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from typing import TYPE_CHECKING
 
 import pygame
@@ -33,6 +38,8 @@ class Button:
     def draw(self) -> None:
         """Draw the button's rectangle and label."""
         self.screen.fill(self.settings.button_color, self.rect)
+        pygame.draw.rect(self.screen, self.settings.button_border_color,
+                         self.rect, width=2)
         self.screen.blit(self.message_image, self.message_rect)
 
     def check_clicked(self, mouse_position) -> bool:

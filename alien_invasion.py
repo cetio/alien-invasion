@@ -1,5 +1,11 @@
 #!/usr/bin/env python3.12
-"""Alien Invasion — main game module."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Alien Invasion - main game module.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
+import argparse
 import sys
 
 import pygame
@@ -16,10 +22,11 @@ from settings import Settings
 class AlienInvasion:
     """Overall class to manage game assets and behavior."""
 
-    def __init__(self) -> None:
+    def __init__(self, milestone: str = "final") -> None:
         """Initialize the game, and create game resources."""
         pygame.init()
 
+        self.milestone = milestone
         self.clock = pygame.time.Clock()
         self.settings = Settings()
         self.game_stats = GameStats(self)
@@ -27,8 +34,9 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode(
             (self.settings.screen_w, self.settings.screen_h))
         pygame.display.set_caption(self.settings.name)
-        self.play_button = Button(self, "Play")
-        self.hud = HUD(self)
+        if self.milestone == "final":
+            self.play_button = Button(self, "Play")
+            self.hud = HUD(self)
 
         self.bg = pygame.image.load(self.settings.bg_file)
         self.bg = pygame.transform.scale(
@@ -37,9 +45,10 @@ class AlienInvasion:
         self.arsenal = ShipArsenal(self)
         self.ship = Ship(self, self.arsenal)
         self.entities = [self.ship]
-        self.alien_fleet = AlienFleet(self)
-        self.alien_fleet.create_fleet()
-        self.entities.append(self.alien_fleet)
+        if self.milestone != "1":
+            self.alien_fleet = AlienFleet(self)
+            self.alien_fleet.create_fleet()
+            self.entities.append(self.alien_fleet)
 
         pygame.mixer.init()
         self.laser_sound = pygame.mixer.Sound(self.settings.laser_sound)
@@ -47,8 +56,14 @@ class AlienInvasion:
         self.impact_sound = pygame.mixer.Sound(self.settings.impact_sound)
         self.impact_sound.set_volume(0.7)
 
+        if self.milestone == "final":
+            self.button_sound = pygame.mixer.Sound(self.settings.button_sound)
+            self.button_sound.set_volume(0.5)
+            pygame.mixer.music.set_volume(0.4)
+
         self.running = True
-        self.active = False
+        self.active = self.milestone != "final"
+        pygame.mouse.set_visible(not self.active)
 
     def run_game(self) -> None:
         """Start the main loop for the game."""
@@ -56,7 +71,8 @@ class AlienInvasion:
             self._check_input()
             if self.active:
                 self._update_entities()
-                self._check_collisions()
+                if self.milestone != "1":
+                    self._check_collisions()
             self._update_screen()
             # TODO: This seems like a horrible idea. Time delta is superior, as FPS can be tricked.
             self.clock.tick(self.settings.fps)
@@ -81,11 +97,13 @@ class AlienInvasion:
         collisions = self.alien_fleet.check_collisions(self.ship.arsenal.arsenal)
         if collisions:
             self.impact_sound.play(fade_ms=250)
-            self.game_stats.update(collisions)
-            self.hud.update_scores()
+            if self.milestone == "final":
+                self.game_stats.update(collisions)
+                self.hud.update_scores()
             if self.alien_fleet.check_destroyed_status():
                 self.game_stats.update_level()
-                self.hud.update_level()
+                if self.milestone == "final":
+                    self.hud.update_level()
                 self.settings.increase_difficulty()
                 self._reset_level()
 
@@ -93,22 +111,28 @@ class AlienInvasion:
         """Restore gameplay defaults and reset the world for a new run."""
         self.settings.initialize_dynamic_settings()
         self.game_stats.reset_stats()
-        self.hud.update_scores()
-        self.hud.update_level()
+        if self.milestone == "final":
+            self.hud.update_scores()
+            self.hud.update_level()
         self.ship.moving_right = False
         self.ship.moving_left = False
         self.ship.protected_until = 0
-        self.alien_fleet.fleet_direction = self.settings.fleet_direction
-        self.alien_fleet.drop_speed = self.settings.fleet_drop_speed
+        if self.milestone != "1":
+            self.alien_fleet.fleet_direction = self.settings.fleet_direction
+            self.alien_fleet.drop_speed = self.settings.fleet_drop_speed
         self._reset_level()
         self.active = True
+        if self.milestone == "final":
+            pygame.mixer.music.load(self.settings.background_music)
+            pygame.mixer.music.play(loops=-1)
         pygame.mouse.set_visible(False)
 
     def _reset_level(self) -> None:
         """Clear projectiles, rebuild the fleet, and re-center the ship."""
         self.ship.arsenal.arsenal.empty()
-        self.alien_fleet.fleet.empty()
-        self.alien_fleet.create_fleet()
+        if self.milestone != "1":
+            self.alien_fleet.fleet.empty()
+            self.alien_fleet.create_fleet()
         self.ship._center_ship()
 
     def _check_game_status(self, reset_level=True) -> None:
@@ -123,6 +147,11 @@ class AlienInvasion:
             self.ship.protect()
         else:
             self.active = False
+            if self.milestone == "final":
+                pygame.mixer.music.load(self.settings.endgame_music)
+                pygame.mixer.music.play(loops=-1)
+            else:
+                self._restart_game()
 
     def _update_screen(self) -> None:
         """Draw the background and entities in layer order, then flip."""
@@ -132,8 +161,9 @@ class AlienInvasion:
         for entity in sorted(self.entities, key=lambda entity: entity.layer):
             entity.draw()
 
-        self.hud.draw()
-        if not self.active:
+        if self.milestone == "final":
+            self.hud.draw()
+        if self.milestone == "final" and not self.active:
             self.play_button.draw()
             pygame.mouse.set_visible(True)
 
@@ -155,13 +185,16 @@ class AlienInvasion:
     def _quit_game(self) -> None:
         """Save score records and close the game."""
         self.running = False
-        self.game_stats.save_scores()
+        if self.milestone == "final":
+            self.game_stats.save_scores()
         pygame.quit()
         sys.exit()
 
     def _check_button_clicked(self, mouse_position) -> None:
         """Start a new run when the inactive Play button is clicked."""
-        if not self.active and self.play_button.check_clicked(mouse_position):
+        if (self.milestone == "final" and not self.active
+                and self.play_button.check_clicked(mouse_position)):
+            self.button_sound.play()
             self._restart_game()
 
     def _check_keydown_events(self, event: pygame.event.Event) -> None:
@@ -185,5 +218,9 @@ class AlienInvasion:
 
 
 if __name__ == '__main__':
-    window = AlienInvasion()
+    parser = argparse.ArgumentParser(description="Alien Invasion - Track 2")
+    parser.add_argument("--milestone", choices=("1", "2", "final"),
+                        default="final", help="Choose the submission scope")
+    arguments = parser.parse_args()
+    window = AlienInvasion(arguments.milestone)
     window.run_game()

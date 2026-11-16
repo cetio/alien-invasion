@@ -1,4 +1,9 @@
-"""Interface for game entities."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Interface for game entities.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from abc import ABC, abstractmethod
 
 

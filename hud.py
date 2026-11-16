@@ -1,4 +1,9 @@
-"""The game's statistics overlay."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: The game's statistics overlay.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from typing import TYPE_CHECKING
 
 import pygame

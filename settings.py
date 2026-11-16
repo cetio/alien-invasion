@@ -1,4 +1,9 @@
-"""Settings for Alien Invasion."""
+"""Program Name: Alien Invasion - Track 2
+Author: cet
+Purpose: Settings for Alien Invasion.
+Starter Code Links: https://github.com/cetio/alien-invasion/tree/main
+Date Updated: 2026-11-15
+"""
 from pathlib import Path
 
 
@@ -7,21 +12,23 @@ class Settings:
 
     def __init__(self) -> None:
         """Initialize the game's settings."""
-        self.name: str = "Alien Invasion"
+        self.name: str = "Alien Invasion - Track 2"
         self.screen_w = 1200
         self.screen_h = 800
         self.fps = 60
 
-        self.images_dir = Path.cwd() / "Assets" / "images"
-        self.sound_dir = Path.cwd() / "Assets" / "sound"
-        self.fonts_dir = Path.cwd() / "Assets" / "Fonts"
-        self.file_dir = Path.cwd() / "Assets" / "file"
+        assets_dir = Path(__file__).resolve().parent / "Assets"
+        self.images_dir = assets_dir / "images"
+        self.sound_dir = assets_dir / "sound"
+        self.fonts_dir = assets_dir / "Fonts"
+        self.file_dir = assets_dir / "file"
         self.scores_file = self.file_dir / "scores.json"
 
         self.font_file = self.fonts_dir / "Silkscreen" / "Silkscreen-Bold.ttf"
         self.button_w = 200
         self.button_h = 50
-        self.button_color = (0, 128, 0)
+        self.button_color = (15, 25, 42)
+        self.button_border_color = (116, 190, 215)
         self.text_color = (255, 255, 255)
         self.button_font_size = 48
         self.hud_font_size = 20
@@ -34,12 +41,15 @@ class Settings:
         self.ship_protection_duration = 1000
 
         self.bullet_file = self.images_dir / "laserBlast.png"
-        self.laser_sound = self.sound_dir / "laser.mp3"
+        self.laser_sound = self.sound_dir / "laserRetro_000.ogg"
+        self.button_sound = self.sound_dir / "confirmation_001.ogg"
+        self.background_music = self.sound_dir / "level1.ogg"
+        self.endgame_music = self.sound_dir / "ending.ogg"
 
         self.alien_file = self.images_dir / "enemy_4.png"
         self.alien_bullet_file = self.images_dir / "laserBlast.png"
         self.life_file = self.images_dir / "Player_Heart.png"
-        self.impact_sound = self.sound_dir / "impactSound.mp3"
+        self.impact_sound = self.sound_dir / "explosionCrunch_000.ogg"
         self.fleet_direction = 1
         self.difficulty_scale = 1.1
 
