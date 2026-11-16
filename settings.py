@@ -28,8 +28,8 @@ class Settings:
 
         self.bg_file = self.images_dir / "starfield-background.png"
         self.ship_file = self.images_dir / "ship2(no bg).png"
-        self.ship_w = 40
-        self.ship_h = 60
+        self.ship_w = 48
+        self.ship_h = 72
         self.ship_bottom_margin = 20
         self.ship_protection_duration = 1000
 
