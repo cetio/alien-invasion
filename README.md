@@ -19,6 +19,10 @@ Click Play to start. Use the arrow keys to move, Space to fire, and Q to quit.
 For milestone demos, add `--milestone 1` or `--milestone 2` to the launch command.
 The default is the final build.
 
+## Demo
+
+[Final_Project_Demo](https://youtu.be/SuC_veFr1d0)
+
 ## License
 
 Alien Invasion is licensed under [Apache-2.0](LICENSE.txt). Third-party assets
