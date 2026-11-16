@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.12
 """Alien Invasion — main game module."""
 import sys
-from time import sleep
 
 import pygame
 
@@ -74,7 +73,7 @@ class AlienInvasion:
             return
         if self.ship.check_collisions(self.alien_fleet.arsenal.arsenal):
             self.impact_sound.play(fade_ms=250)
-            self._check_game_status()
+            self._check_game_status(reset_level=False)
             return
         if self.alien_fleet.check_fleet_bottom():
             self._check_game_status()
@@ -98,6 +97,7 @@ class AlienInvasion:
         self.hud.update_level()
         self.ship.moving_right = False
         self.ship.moving_left = False
+        self.ship.protected_until = 0
         self.alien_fleet.fleet_direction = self.settings.fleet_direction
         self.alien_fleet.drop_speed = self.settings.fleet_drop_speed
         self._reset_level()
@@ -110,14 +110,17 @@ class AlienInvasion:
         self.alien_fleet.fleet.empty()
         self.alien_fleet.create_fleet()
         self.ship._center_ship()
-        sleep(0.5)
 
-    def _check_game_status(self) -> None:
-        """Spend a ship and stop gameplay when none remain."""
+    def _check_game_status(self, reset_level=True) -> None:
+        """Spend a ship and protect survivors, resetting the fleet if needed."""
         if self.game_stats.ships_left > 0:
             self.game_stats.ships_left -= 1
         if self.game_stats.ships_left > 0:
-            self._reset_level()
+            if reset_level:
+                self._reset_level()
+            else:
+                self.alien_fleet.arsenal.reset()
+            self.ship.protect()
         else:
             self.active = False
 

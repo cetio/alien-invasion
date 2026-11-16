@@ -30,6 +30,7 @@ class Ship:
 
         self.moving_right = False
         self.moving_left = False
+        self.protected_until = 0
 
     def _center_ship(self) -> None:
         """Center the ship at the bottom and reset its float position."""
@@ -54,13 +55,19 @@ class Ship:
         return self.arsenal.fire_bullet()
 
     def check_collisions(self, other_group) -> bool:
-        """Re-center the ship if it collides with another sprite."""
-        if pygame.sprite.spritecollideany(self, other_group):
-            self._center_ship()
-            return True
-        return False
+        """Return whether an unprotected ship collides with another sprite."""
+        if pygame.time.get_ticks() < self.protected_until:
+            return False
+        return pygame.sprite.spritecollideany(self, other_group) is not None
+
+    def protect(self) -> None:
+        """Give the ship a brief protection period after losing a life."""
+        self.protected_until = (
+            pygame.time.get_ticks() + self.settings.ship_protection_duration)
 
     def draw(self) -> None:
-        """Draw the ship and its arsenal."""
+        """Draw the arsenal and blink the ship while it is protected."""
         self.arsenal.draw()
-        self.screen.blit(self.image, self.rect)
+        remaining = self.protected_until - pygame.time.get_ticks()
+        if remaining <= 0 or (remaining // 100) % 2 == 0:
+            self.screen.blit(self.image, self.rect)
