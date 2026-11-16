@@ -72,6 +72,10 @@ class AlienInvasion:
         if self.ship.check_collisions(self.alien_fleet.fleet):
             self._check_game_status()
             return
+        if self.ship.check_collisions(self.alien_fleet.arsenal.arsenal):
+            self.impact_sound.play(fade_ms=250)
+            self._check_game_status()
+            return
         if self.alien_fleet.check_fleet_bottom():
             self._check_game_status()
             return

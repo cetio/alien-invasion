@@ -35,6 +35,7 @@ class Settings:
         self.laser_sound = self.sound_dir / "laser.mp3"
 
         self.alien_file = self.images_dir / "enemy_4.png"
+        self.alien_bullet_file = self.images_dir / "laserBlast.png"
         self.impact_sound = self.sound_dir / "impactSound.mp3"
         self.fleet_direction = 1
         self.difficulty_scale = 1.1
@@ -53,6 +54,11 @@ class Settings:
 
         self.alien_w = 40
         self.alien_h = 40
+        self.alien_bullet_w = 25
+        self.alien_bullet_h = 80
+        self.alien_bullet_speed = 7
+        self.alien_bullet_amount = 5
+        self.alien_fire_interval = 1000
         self.alien_points = 50
         self.fleet_speed = 2
         self.fleet_drop_speed = 10

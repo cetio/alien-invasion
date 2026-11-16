@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import pygame
 
 from entities.alien import Alien
+from entities.alien_arsenal import AlienArsenal
 from entity import Entity
 
 if TYPE_CHECKING:
@@ -20,11 +21,13 @@ class AlienFleet(Entity):
         self.layer = 3
         self.priority = 3
         self.fleet = pygame.sprite.Group()
+        self.arsenal = AlienArsenal(self)
         self.fleet_direction = self.settings.fleet_direction
         self.drop_speed = self.settings.fleet_drop_speed
 
     def create_fleet(self) -> None:
         """Create a centered rectangular fleet in the screen's top half."""
+        self.arsenal.reset()
         alien_w = self.settings.alien_w
         alien_h = self.settings.alien_h
         screen_w = self.settings.screen_w
@@ -77,9 +80,10 @@ class AlienFleet(Entity):
         self.fleet.add(Alien(self, current_x, current_y))
 
     def update(self) -> None:
-        """Handle screen edges, then move all aliens together."""
+        """Move the fleet and update its arsenal."""
         self._check_fleet_edges()
         self.fleet.update()
+        self.arsenal.update_arsenal()
 
     def _check_fleet_edges(self) -> None:
         """Drop and reverse the fleet when any alien reaches an edge."""
@@ -117,7 +121,8 @@ class AlienFleet(Entity):
         return not self.fleet
 
     def draw(self) -> None:
-        """Draw each alien in the fleet."""
+        """Draw the fleet's arsenal and each alien."""
+        self.arsenal.draw()
         alien: Alien
         for alien in self.fleet:
             alien.draw()
