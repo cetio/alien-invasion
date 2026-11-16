@@ -33,8 +33,10 @@ class Ship:
         self.protected_until = 0
 
     def _center_ship(self) -> None:
-        """Center the ship at the bottom and reset its float position."""
-        self.rect.midbottom = self.boundaries.midbottom
+        """Center the ship above the bottom edge and reset its float position."""
+        self.rect.midbottom = (
+            self.boundaries.centerx,
+            self.boundaries.bottom - self.settings.ship_bottom_margin)
         self.x = float(self.rect.x)
 
     def update(self) -> None:
