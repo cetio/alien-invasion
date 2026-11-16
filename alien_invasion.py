@@ -206,6 +206,9 @@ class AlienInvasion:
         elif event.key == pygame.K_SPACE:
             if self.active and self.ship.fire():
                 self.laser_sound.play(fade_ms=250)
+            elif self.milestone == "final" and not self.active:
+                self.button_sound.play()
+                self._restart_game()
         elif event.key == pygame.K_q:
             self._quit_game()
 
