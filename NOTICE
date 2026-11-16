@@ -4,9 +4,28 @@ Copyright 2026 cet
 This project is licensed under the Apache License, Version 2.0. See LICENSE.txt
 for the license text.
 
-This distribution includes the following third-party asset, which is licensed
+This distribution includes the following third-party assets, which are licensed
 separately from the project:
 
+--------------------------------------------------------------------------------
+Sci-fi Sounds: laserRetro_000.ogg, explosionCrunch_000.ogg
+Author: Kenney (www.kenney.nl)
+License: CC0
+Source: https://kenney.nl/assets/sci-fi-sounds
+License text: Assets/sound/LICENSE-Kenney-Sci-Fi.txt
+--------------------------------------------------------------------------------
+Interface Sounds: confirmation_001.ogg
+Author: Kenney (www.kenney.nl)
+License: CC0
+Source: https://kenney.nl/assets/interface-sounds
+License text: Assets/sound/LICENSE-Kenney-Interface.txt
+--------------------------------------------------------------------------------
+5 Chiptunes (Action): Level 1, Ending
+Author: Juhani Junkala (SubspaceAudio)
+License: CC0
+Source: https://opengameart.org/content/5-chiptunes-action
+License text: Assets/sound/LICENSE-Juhani-Junkala.txt
+Distributed as level1.ogg and ending.ogg, converted from the original WAV files.
 --------------------------------------------------------------------------------
 starfield-background.png
 Author: Sauer2
@@ -17,4 +36,10 @@ Player_Heart.png
 Author: Toprak.exe
 License: CC0
 Source: https://toprakexe.itch.io/blast
+--------------------------------------------------------------------------------
+Silkscreen font files
+Copyright 2001 The Silkscreen Project Authors
+License: SIL Open Font License 1.1
+Source: https://github.com/googlefonts/silkscreen
+License text: Assets/Fonts/Silkscreen/OFL.txt
 --------------------------------------------------------------------------------
