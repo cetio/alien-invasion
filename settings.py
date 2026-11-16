@@ -26,7 +26,7 @@ class Settings:
         self.button_font_size = 48
         self.hud_font_size = 20
 
-        self.bg_file = self.images_dir / "Starbasesnow.png"
+        self.bg_file = self.images_dir / "starfield-background.png"
         self.ship_file = self.images_dir / "ship2(no bg).png"
         self.ship_w = 40
         self.ship_h = 60
